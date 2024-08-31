@@ -1,5 +1,5 @@
 import React from 'react';
-import logo from './mike.png';
+import logo from './../mike.png';
 import { Link } from 'react-router-dom';
  // Replace with your logo file path
 
