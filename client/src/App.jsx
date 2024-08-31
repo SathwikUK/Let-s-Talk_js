@@ -1,16 +1,27 @@
+// src/app.jsx
+import React from 'react'; // Import React
 import './App.css';
 import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
 import Main from './pages/main/main';
 import { Room } from './pages/room/room';
-import { Signin } from './pages/sign-in/signin';
+import Signin from './pages/sign-in/signin'; // Notice the default import here
 import { StreamCall } from '@stream-io/video-react-sdk';
 import { useUser } from './user-context';
 import Cookies from "universal-cookie";
 import Logo from './Logo'; // Import the Logo component
 
-function App() {
+const App = () => {
   const { call, setUser, setCall } = useUser();
   const cookies = new Cookies();
+
+  const handleLogout = () => {
+    cookies.remove("token");
+    cookies.remove("name");
+    cookies.remove("username");
+    setUser(null);
+    setCall(undefined);
+    window.location.pathname = "/sign-in";
+  };
 
   return (
     <Router>
@@ -27,7 +38,7 @@ function App() {
               element={
                 call ? (
                   <StreamCall call={call}>
-                    <Room />{" "}
+                    <Room />
                   </StreamCall>
                 ) : (
                   <Navigate to="/" />
@@ -36,24 +47,18 @@ function App() {
             />
           </Routes>
         </main>
-        <div>
+        <footer>
           <button
             className="logout-button"
-            onClick={() => {
-              cookies.remove("token");
-              cookies.remove("name");
-              cookies.remove("username");
-              setUser(null);
-              setCall(undefined);
-              window.location.pathname = "/sign-in";
-            }}
+            onClick={handleLogout}
           >
             Logout
           </button>
-        </div>
+        </footer>
       </div>
     </Router>
   );
-}
+};
 
+// Export the App component as default
 export default App;

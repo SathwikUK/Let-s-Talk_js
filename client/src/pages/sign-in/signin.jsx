@@ -1,4 +1,6 @@
-import { useForm, SubmitHandler } from "react-hook-form";
+// src/pages/sign-in/sign-in.jsx
+import React from 'react';
+import { useForm } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";
 import * as yup from "yup";
 import { PEOPLE_IMAGES } from '../../Images';
@@ -7,14 +9,9 @@ import { StreamVideoClient } from "@stream-io/video-react-sdk";
 import { useUser } from "../../user-context";
 import { useNavigate } from "react-router-dom";
 import voice from './checkvoice.png';
-import voice2 from './voice2 (2).png'
 
-interface FormValues {
-  username: string;
-  name: string;
-}
-
-export const Signin = () => {
+const Signin = () => {
+  // Validation schema using yup
   const schema = yup.object().shape({
     username: yup
       .string()
@@ -22,11 +19,12 @@ export const Signin = () => {
       .matches(/^[a-zA-Z0-9_.@$]+$/, "Invalid Username"),
     name: yup.string().required("Name is Required"),
   });
-  const navigate=useNavigate();
+
+  const navigate = useNavigate();
   const cookies = new Cookies();
-  const {setClient,setUser}= useUser();
-  
-  const onSubmit: SubmitHandler<FormValues> = async (data) => {
+  const { setClient, setUser } = useUser();
+
+  const onSubmit = async (data) => {
     const { username, name } = data;
 
     try {
@@ -61,23 +59,23 @@ export const Signin = () => {
       });
 
       setClient(myClient);
-      setUser({username,name});
+      setUser({ username, name });
 
       const expires = new Date();
       expires.setDate(expires.getDate() + 1);
-      
+
       cookies.set("token", responseData.token, { expires });
       cookies.set("username", responseData.username, { expires });
       cookies.set("name", responseData.name, { expires });
 
+      navigate("/");
     } catch (error) {
       console.error("Error:", error);
       alert("An error occurred while signing in.");
     }
-    navigate("/");
   };
 
-  const { register, handleSubmit, formState: { errors } } = useForm<FormValues>({
+  const { register, handleSubmit, formState: { errors } } = useForm({
     resolver: yupResolver(schema),
   });
 
@@ -98,8 +96,13 @@ export const Signin = () => {
           {errors.name && <p style={{ color: "red" }}>{errors.name.message}</p>}
         </div>
         <button type="submit">Sign In</button>
-      </form><div className="img"><img src={voice}/></div>
-     
+      </form>
+      <div className="img">
+        <img src={voice} alt="Voice Check" />
+      </div>
     </div>
   );
 };
+
+// Ensure the default export
+export default Signin;

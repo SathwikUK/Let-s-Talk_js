@@ -1,39 +1,21 @@
-import { StreamVideo, Call } from "@stream-io/video-react-sdk";
-import { Navigate, useNavigate } from "react-router-dom";
-import { useUser } from "../../user-context"; // Adjust the import path as needed
-import { useEffect, useState } from "react";
-import CryptoJS from "crypto-js";
+import React, { useEffect, useState } from 'react';
+import { StreamVideo } from '@stream-io/video-react-sdk';
+import { Navigate, useNavigate } from 'react-router-dom';
+import CryptoJS from 'crypto-js';
+import { useUser } from '../../user-context'; // Ensure the path is correct
 import talk from '../../voice1.png';
-
-interface Room {
-  id: string;
-  title: string;
-  description: string;
-  participantsLength: number;
-  createdBy: string;
-}
-
-interface NewRoom {
-  name: string;
-  description: string;
-}
-
-type CustomCallData = {
-  description?: string;
-  title?: string;
-};
 
 const Main = () => {
   const { client, user, setCall, isLoading } = useUser();
-  const [newRoom, setNewRoom] = useState<NewRoom>({ name: "", description: "" });
-  const [rooms, setRooms] = useState<Room[]>([]);
+  const [newRoom, setNewRoom] = useState({ name: "", description: "" });
+  const [rooms, setRooms] = useState([]);
   const navigate = useNavigate();
 
   useEffect(() => {
     if (client) fetchListOfCalls();
   }, [client]);
 
-  const hashRoomName = (roomName: string): string => {
+  const hashRoomName = (roomName) => {
     const hash = CryptoJS.SHA256(roomName).toString(CryptoJS.enc.Base64);
     return hash.replace(/[^a-zA-Z0-9_-]/g, "");
   };
@@ -57,7 +39,7 @@ const Main = () => {
     });
   
     setCall(call);
-    navigate(`/room/${roomID}`); // Redirect to the room after creating it
+    navigate(`/room/${roomID}`);
   };
 
   const fetchListOfCalls = async () => {
@@ -72,10 +54,10 @@ const Main = () => {
       return;
     }
 
-    const getCallInfo = async (call: Call): Promise<Room> => {
+    const getCallInfo = async (call) => {
       const callInfo = await call.get();
-      const customData = callInfo.call.custom;
-      const { title, description } = (customData || {}) as CustomCallData;
+      const customData = callInfo.call.custom || {};
+      const { title, description } = customData;
       const participantsLength = callInfo.members.length ?? 0;
       const createdBy = callInfo.call.created_by?.name ?? "";
       const id = callInfo.call.id ?? "";
@@ -94,7 +76,7 @@ const Main = () => {
     setRooms(rooms);
   };
 
-  const joinRoom = async (roomId: string) => {
+  const joinRoom = async (roomId) => {
     const call = client?.call("audio_room", roomId);
     try {
       await call?.join();
@@ -112,20 +94,20 @@ const Main = () => {
   }
 
   return (
-    <StreamVideo client={client!}>
+    <StreamVideo client={client}>
       <div className="home">
         <h1>Welcome, {user?.name}</h1>
         <div className="form">
           <h2>Create Your Own Room</h2>
           <input
             placeholder="Room Name..."
-            onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
+            onChange={(e) =>
               setNewRoom((prev) => ({ ...prev, name: e.target.value }))
             }
           />
           <input
             placeholder="Room Description..."
-            onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
+            onChange={(e) =>
               setNewRoom((prev) => ({ ...prev, description: e.target.value }))
             }
           />
@@ -157,7 +139,7 @@ const Main = () => {
           )}
         </div>
         <div className="right-side-image">
-          <img src={talk}alt="Description" />
+          <img src={talk} alt="Description" />
         </div>
       </div>
     </StreamVideo>

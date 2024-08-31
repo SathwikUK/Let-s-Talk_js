@@ -4,8 +4,8 @@
   "description": "A Node.js server with TypeScript",
   "main": "dist/index.js",
   "scripts": {
-    "start": "nodemon dist/index.js",
-    "build": "tsc"
+    "start": "nodemon dist/index.js"
+    
   },
   "keywords": [],
   "author": "",

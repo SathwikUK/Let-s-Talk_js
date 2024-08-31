@@ -4,6 +4,7 @@ import { Participants } from "./participants";
 import { PermissionRequestsPanel } from "./permission-request";
 import { useUser } from "../../user-context";
 import Cookies from "universal-cookie";
+import React from "react";
 
 export const Room = () => {
   const { useCallCustomData, useParticipants, useCallCreatedBy } = useCallStateHooks();
@@ -50,7 +51,6 @@ export const Room = () => {
         </>
       ) : (
         <button className="request-permission-btn" onClick={requestPermission}>
-          {" "}
           &#9995;
         </button>
       )}

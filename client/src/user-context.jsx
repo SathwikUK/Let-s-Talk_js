@@ -1,33 +1,15 @@
-import { Call, StreamVideoClient, User as StreamUserType } from "@stream-io/video-react-sdk";
-import { createContext, ReactNode, useContext, useEffect, useState } from "react";
+import React, { createContext, ReactNode, useContext, useEffect, useState } from "react";
+import { StreamVideoClient } from "@stream-io/video-react-sdk";
 import Cookies from "universal-cookie";
 
-interface User {
-    username: string;
-    name: string;
-}
+// Define the User and UserContextProps without TypeScript types
+const UserContext = createContext();
 
-interface UserContextProps {
-    user: User | null;
-    setUser: (user: User | null) => void;
-    client: StreamVideoClient | undefined;
-    setClient: (client: StreamVideoClient | undefined) => void;
-    call: Call | undefined;
-    setCall: (call: Call | undefined) => void;
-    isLoading: boolean;
-}
-
-const UserContext = createContext<UserContextProps | undefined>(undefined);
-
-interface UserProviderProps {
-    children: ReactNode;
-}
-
-export const UserProvider = ({ children }: UserProviderProps) => {
-    const [user, setUser] = useState<User | null>(null);
-    const [call, setCall] = useState<Call>();
-    const [client, setClient] = useState<StreamVideoClient | undefined>(undefined);
-    const [isLoading, setIsLoading] = useState<boolean>(true); // Moved this outside of useEffect
+export const UserProvider = ({ children }) => {
+    const [user, setUser] = useState(null);
+    const [call, setCall] = useState();
+    const [client, setClient] = useState();
+    const [isLoading, setIsLoading] = useState(true); // Moved this outside of useEffect
 
     const cookies = new Cookies();
 
@@ -41,7 +23,7 @@ export const UserProvider = ({ children }: UserProviderProps) => {
             return;
         }
 
-        const user: StreamUserType = {
+        const user = {
             id: username,
             name,
         };
